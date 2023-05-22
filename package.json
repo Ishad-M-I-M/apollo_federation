@@ -1,0 +1,25 @@
+{
+  "name": "javascript_subgraph_services",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently -k npm:start:*",
+    "start:products": "nodemon products.js",
+    "start:couriers": "nodemon couriers.js",
+    "start:cargo_service": "nodemon cargo_service.js",
+    "start:tax": "nodemon tax.js",
+    "start:gateway": "nodemon gateway.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/gateway": "^2.4.5",
+    "@apollo/query-planner": "^2.4.5",
+    "@apollo/server": "^4.7.1",
+    "@apollo/subgraph": "^2.4.5",
+    "apollo-server": "^3.12.0",
+    "concurrently": "^8.0.1",
+    "graphql-tag": "^2.12.6"
+  }
+}
