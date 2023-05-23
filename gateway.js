@@ -1,6 +1,9 @@
-const { ApolloServer } = require("apollo-server");
+const { ApolloServer } = require("@apollo/server");
 const { ApolloGateway, IntrospectAndCompose } = require("@apollo/gateway");
+const { startStandaloneServer } = require("@apollo/server/standalone");
 const {serializeQueryPlan} = require('@apollo/query-planner');
+
+const PORT = 4000;
 
 const supergraphSdl = new IntrospectAndCompose({
     subgraphs: [
@@ -20,14 +23,11 @@ const gateway = new ApolloGateway({
     }
 });
 
-(async () => {
-    const server = new ApolloServer({
-        gateway,
-        engine: false,
-        subscriptions: false,
-    });
-
-    server.listen().then(({ url }) => {
-        console.log(`🚀 Server ready at ${url}`);
-    });
-})();
+const server = new ApolloServer({gateway});
+startStandaloneServer(server, {
+    listen:{
+        port: PORT
+    }
+}).then(({url}) => {
+    console.log(`Products service ready at ${url}`);
+});
