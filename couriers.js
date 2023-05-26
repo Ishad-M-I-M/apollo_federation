@@ -1,6 +1,6 @@
-const { ApolloServer} = require("@apollo/server");
-const{ startStandaloneServer } = require('@apollo/server/standalone');
-const {gql} = require("graphql-tag");
+const { ApolloServer } = require("@apollo/server");
+const { startStandaloneServer } = require('@apollo/server/standalone');
+const { gql } = require("graphql-tag");
 const { buildSubgraphSchema } = require("@apollo/subgraph");
 
 const PORT = 4002;
@@ -9,16 +9,16 @@ const typeDefs = gql`
     type Courier @key(fields: "id") {
         id: ID!
         name: String
-        shippingCharge: Float  @external
-        tax: Float @external  
+        shippingCharge: Float
+        tax: Float
     }
     
-    extend type Product @key(fields: "id") {
+    type Product @key(fields: "id") {
         id: ID!
         courier: Courier
     }
     
-    extend type Query {
+    type Query {
         courier(id: ID!): Courier
         couriers: [Courier]
     }
@@ -36,7 +36,7 @@ const resolvers = {
         }
     },
     Query: {
-        courier(_, {id}) {
+        courier(_, { id }) {
             return couriers.find(courier => courier.id === id);
         },
         couriers() {
@@ -50,21 +50,25 @@ const server = new ApolloServer({
 });
 
 startStandaloneServer(server, {
-    listen:{
+    listen: {
         port: PORT
     }
-}).then(({url}) => {
+}).then(({ url }) => {
     console.log(`Products service ready at ${url}`);
 });
 
 const couriers = [
     {
         id: "1",
-        name: "DHL"
+        name: "DHL",
+        shippingCharge: "30.0",
+        tax: "10.0"
     },
     {
         id: "2",
-        name: "FedEx"
+        name: "FedEx",
+        shippingCharge: "20.0",
+        tax: "10.0"
     }
 ];
 

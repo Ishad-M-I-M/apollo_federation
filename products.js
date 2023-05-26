@@ -1,6 +1,6 @@
-const { ApolloServer} = require("@apollo/server");
-const{ startStandaloneServer } = require('@apollo/server/standalone');
-const {gql} = require("graphql-tag");
+const { ApolloServer } = require("@apollo/server");
+const { startStandaloneServer } = require('@apollo/server/standalone');
+const { gql } = require("graphql-tag");
 const { buildSubgraphSchema } = require("@apollo/subgraph");
 
 const PORT = 4001;
@@ -14,13 +14,14 @@ const typeDefs = gql`
         estimatedShippingCharge: Float @requires(fields: "courier {shippingCharge tax} ")
     }
     
-    extend type Courier @key(fields: "id") {
-        id: ID! @external
+    # see https://www.apollographql.com/docs/federation/entities#referencing-an-entity-without-contributing-fields
+    type Courier @key(fields: "id", resolvable: false) {
+        id: ID!
         shippingCharge: Float @external
         tax: Float @external
     }
     
-    extend type Query {
+    type Query {
         product(id: ID!): Product
         products: [Product]
     }
@@ -29,14 +30,18 @@ const typeDefs = gql`
 const resolvers = {
     Product: {
         __resolveReference(object) {
-            return products.find(product => product.id === object.id);
+            const product = products.find(product => product.id === object.id);
+            if (object.courier) {
+                product.courier = object.courier;
+            }
+            return product;
         },
         estimatedShippingCharge(object) {
             return object.courier.shippingCharge + object.courier.tax;
         }
     },
     Query: {
-        product(_, {id}) {
+        product(_, { id }) {
             return products.find(product => product.id === id);
         },
         products() {
@@ -50,10 +55,10 @@ const server = new ApolloServer({
 });
 
 startStandaloneServer(server, {
-    listen:{
+    listen: {
         port: PORT
     }
-}).then(({url}) => {
+}).then(({ url }) => {
     console.log(`Products service ready at ${url}`);
 });
 
