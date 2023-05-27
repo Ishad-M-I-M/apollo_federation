@@ -9,8 +9,6 @@ const typeDefs = gql`
     type Courier @key(fields: "id") {
         id: ID!
         name: String
-        shippingCharge: Float
-        tax: Float
     }
     
     type Product @key(fields: "id") {
@@ -60,15 +58,11 @@ startStandaloneServer(server, {
 const couriers = [
     {
         id: "1",
-        name: "DHL",
-        shippingCharge: "30.0",
-        tax: "10.0"
+        name: "DHL"
     },
     {
         id: "2",
-        name: "FedEx",
-        shippingCharge: "20.0",
-        tax: "10.0"
+        name: "FedEx"
     }
 ];
 
